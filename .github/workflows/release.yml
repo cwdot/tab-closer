@@ -1,0 +1,36 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify tag matches manifest version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          MANIFEST_VERSION=$(python3 -c "import json;print(json.load(open('manifest.json'))['version'])")
+          if [ "$TAG_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "tag $TAG_VERSION does not match manifest version $MANIFEST_VERSION" >&2
+            exit 1
+          fi
+
+      - name: Build XPI
+        run: make build
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes \
+            dist/*.xpi

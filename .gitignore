@@ -1,0 +1,6 @@
+dist/
+.DS_Store
+*.xpi
+.idea/
+.vscode/
+node_modules/

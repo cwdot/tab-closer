@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <nav class="tabs" role="tablist">
+    <button class="tab" data-mode="domain" role="tab">Domain</button>
+    <button class="tab" data-mode="title" role="tab">Title</button>
+    <button class="tab" data-mode="age" role="tab">Age</button>
+    <button class="tab" data-mode="duplicates" role="tab">Duplicates</button>
+  </nav>
+
+  <div class="presets">
+    <select id="preset-select">
+      <option value="">Load preset…</option>
+    </select>
+    <button id="preset-save" title="Save current filter">Save</button>
+    <button id="preset-delete" title="Delete selected preset" disabled>×</button>
+  </div>
+
+  <section class="panel" data-mode="domain">
+    <label>Domain matches
+      <input type="text" id="domain-input" placeholder="example.com">
+    </label>
+    <label class="inline">
+      <input type="checkbox" id="domain-regex"> regex
+    </label>
+    <div class="top-domains">
+      <div class="top-domains-label">Top domains</div>
+      <ul id="top-domains-list"></ul>
+    </div>
+  </section>
+
+  <section class="panel" data-mode="title" hidden>
+    <label>Title matches
+      <input type="text" id="title-input" placeholder="search text">
+    </label>
+    <label class="inline">
+      <input type="checkbox" id="title-regex"> regex
+    </label>
+  </section>
+
+  <section class="panel" data-mode="age" hidden>
+    <label>Older than
+      <input type="number" id="age-input" min="1" value="7">
+      <select id="age-unit">
+        <option value="hours">hours</option>
+        <option value="days" selected>days</option>
+      </select>
+    </label>
+  </section>
+
+  <section class="panel" data-mode="duplicates" hidden>
+    <label>Match duplicates by
+      <select id="dup-mode">
+        <option value="url">exact URL</option>
+        <option value="url-noquery" selected>URL (ignore query/hash)</option>
+        <option value="title">title</option>
+      </select>
+    </label>
+    <p class="hint">Keeps the most recently used tab in each group.</p>
+  </section>
+
+  <div class="preview">
+    <div class="preview-header">
+      <span id="match-count">0 tabs match</span>
+      <label><input type="checkbox" id="select-all" checked> select all</label>
+    </div>
+    <ul id="preview-list"></ul>
+  </div>
+
+  <footer>
+    <button id="close-btn" disabled>Close selected</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>

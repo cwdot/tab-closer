@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "Tab Closer",
+  "version": "0.2.0",
+  "description": "Close tabs by domain, title, age, or duplicates — with preview.",
+  "permissions": ["tabs", "menus", "storage"],
+  "browser_action": {
+    "default_title": "Tab Closer",
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.svg"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "tab-closer@cwdot.github.io"
+    }
+  }
+}
