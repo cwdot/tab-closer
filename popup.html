@@ -12,6 +12,10 @@
     <button class="tab" data-mode="duplicates" role="tab">Duplicates</button>
   </nav>
 
+  <div class="scope">
+    <label><input type="checkbox" id="current-window-only"> current window only</label>
+  </div>
+
   <div class="presets">
     <select id="preset-select">
       <option value="">Load preset…</option>
@@ -31,6 +35,7 @@
       <div class="top-domains-label">Top domains</div>
       <ul id="top-domains-list"></ul>
     </div>
+    <div class="version" id="version"></div>
   </section>
 
   <section class="panel" data-mode="title" hidden>

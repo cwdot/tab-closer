@@ -1,4 +1,10 @@
-const state = { mode: "domain", matches: [], selected: new Set() };
+const state = { mode: "domain", matches: [], selected: new Set(), currentWindowOnly: false };
+
+function tabQuery() {
+  const q = { pinned: false };
+  if (state.currentWindowOnly) q.currentWindow = true;
+  return q;
+}
 
 const inputs = {
   domain: document.getElementById("domain-input"),
@@ -25,7 +31,7 @@ function setMode(mode) {
 async function renderTopDomains() {
   const list = document.getElementById("top-domains-list");
   if (!list) return;
-  const tabs = await browser.tabs.query({ pinned: false });
+  const tabs = await browser.tabs.query(tabQuery());
   const counts = new Map();
   for (const t of tabs) {
     const h = hostnameOf(t.url);
@@ -114,7 +120,7 @@ function findDuplicates(tabs, mode) {
 }
 
 async function findMatches() {
-  const tabs = await browser.tabs.query({ pinned: false });
+  const tabs = await browser.tabs.query(tabQuery());
   const now = Date.now();
 
   if (state.mode === "domain") {
@@ -301,8 +307,21 @@ document.getElementById("preset-select").addEventListener("change", async e => {
   if (p) applyFilter(p.filter);
 });
 
+const scopeToggle = document.getElementById("current-window-only");
+scopeToggle.addEventListener("change", async () => {
+  state.currentWindowOnly = scopeToggle.checked;
+  await browser.storage.local.set({ currentWindowOnly: state.currentWindowOnly });
+  if (state.mode === "domain") renderTopDomains();
+  refresh();
+});
+
+document.getElementById("version").textContent = `v${browser.runtime.getManifest().version}`;
+
 (async () => {
   await loadPresets();
+  const { currentWindowOnly = false } = await browser.storage.local.get("currentWindowOnly");
+  state.currentWindowOnly = currentWindowOnly;
+  scopeToggle.checked = currentWindowOnly;
   const { pendingFilter } = await browser.storage.local.get("pendingFilter");
   if (pendingFilter) {
     await browser.storage.local.remove("pendingFilter");
