@@ -45,7 +45,7 @@ function buildFilterFromTab(mode, tab) {
     return { mode: "age", value: String(days), unit: "days" };
   }
   if (mode === "duplicates") {
-    return { mode: "duplicates", dupMode: "url-noquery" };
+    return { mode: "duplicates", dupMode: "url" };
   }
   return { mode };
 }
