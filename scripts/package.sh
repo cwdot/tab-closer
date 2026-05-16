@@ -43,4 +43,5 @@ zip -qr -FS -X "$OUT" "${INCLUDE[@]}" \
   --exclude '*/.*' \
   --exclude '*~'
 
+echo "built in $DIST"
 echo "built $OUT ($(wc -c < "$OUT" | tr -d ' ') bytes)"

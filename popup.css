@@ -1,8 +1,11 @@
 body {
   width: 380px;
+  height: 580px;
   margin: 0;
   font-family: system-ui, sans-serif;
   font-size: 13px;
+  display: flex;
+  flex-direction: column;
 }
 
 .tabs {
@@ -153,7 +156,8 @@ body {
 
 .preview {
   border-top: 1px solid #eee;
-  max-height: 280px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
