@@ -124,9 +124,30 @@ async function findMatches() {
   const now = Date.now();
 
   if (state.mode === "domain") {
-    const m = compileMatcher(inputs.domain.value.trim(), inputs.domainRegex.checked, inputs.domain);
-    if (!m) return [];
-    return tabs.filter(t => m(hostnameOf(t.url)));
+    const value = inputs.domain.value.trim();
+    if (inputs.domainRegex.checked) {
+      const m = compileMatcher(value, true, inputs.domain);
+      if (!m) return [];
+      return tabs.filter(t => m(hostnameOf(t.url)));
+    }
+    if (!value) return [];
+    const needle = value.toLowerCase();
+    return tabs.filter(t => {
+      const h = hostnameOf(t.url).toLowerCase();
+      return h === needle || h.endsWith("." + needle);
+    });
+  }
+  if (state.mode === "unique") {
+    const counts = new Map();
+    for (const t of tabs) {
+      const h = hostnameOf(t.url);
+      if (!h) continue;
+      counts.set(h, (counts.get(h) || 0) + 1);
+    }
+    return tabs.filter(t => {
+      const h = hostnameOf(t.url);
+      return h && counts.get(h) === 1;
+    });
   }
   if (state.mode === "title") {
     const m = compileMatcher(inputs.title.value.trim(), inputs.titleRegex.checked, inputs.title);
