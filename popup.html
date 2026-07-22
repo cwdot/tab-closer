@@ -10,6 +10,7 @@
     <button class="tab" data-mode="title" role="tab">Title</button>
     <button class="tab" data-mode="age" role="tab">Age</button>
     <button class="tab" data-mode="duplicates" role="tab">Duplicates</button>
+    <button class="tab" data-mode="unique" role="tab">Unique</button>
   </nav>
 
   <div class="scope">
@@ -66,6 +67,10 @@
       </select>
     </label>
     <p class="hint">Keeps the most recently used tab in each group.</p>
+  </section>
+
+  <section class="panel" data-mode="unique" hidden>
+    <p class="hint">Tabs whose domain has only this one tab open &mdash; often stragglers that get lost among busier domains.</p>
   </section>
 
   <div class="preview">
