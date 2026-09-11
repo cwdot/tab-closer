@@ -1,6 +1,6 @@
 body {
   width: 380px;
-  height: 580px;
+  min-height: 580px;
   margin: 0;
   font-family: system-ui, sans-serif;
   font-size: 13px;
@@ -120,24 +120,41 @@ body {
   margin: 0;
   padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  flex-direction: column;
+  gap: 2px;
 }
 
 #top-domains-list li {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: space-between;
+  gap: 8px;
   padding: 3px 8px;
   background: #eef3fb;
   border: 1px solid #d4e0f0;
-  border-radius: 12px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 11px;
 }
 
 #top-domains-list li:hover {
   background: #d8e6f7;
+}
+
+#top-domains-list li.checked {
+  background: #d3e6d3;
+  border-color: #a9cca9;
+}
+
+#top-domains-list li input[type=checkbox] {
+  margin: 0;
+}
+
+#top-domains-list .host {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 #top-domains-list .count {
@@ -153,6 +170,7 @@ body {
   border: none;
   cursor: default;
 }
+
 
 .preview {
   border-top: 1px solid #eee;

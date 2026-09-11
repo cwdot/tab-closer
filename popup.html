@@ -7,10 +7,10 @@
 <body>
   <nav class="tabs" role="tablist">
     <button class="tab" data-mode="domain" role="tab">Domain</button>
-    <button class="tab" data-mode="title" role="tab">Title</button>
-    <button class="tab" data-mode="age" role="tab">Age</button>
     <button class="tab" data-mode="duplicates" role="tab">Duplicates</button>
     <button class="tab" data-mode="unique" role="tab">Unique</button>
+    <button class="tab" data-mode="title" role="tab">Title</button>
+    <button class="tab" data-mode="age" role="tab">Age</button>
   </nav>
 
   <div class="scope">
@@ -33,31 +33,13 @@
       <input type="checkbox" id="domain-regex"> regex
     </label>
     <div class="top-domains">
-      <div class="top-domains-label">Top domains</div>
+      <div class="top-domains-label">
+        <label class="inline"><input type="checkbox" id="domain-select-all"> Top domains</label>
+      </div>
       <ul id="top-domains-list"></ul>
     </div>
     <div class="version" id="version"></div>
   </section>
-
-  <section class="panel" data-mode="title" hidden>
-    <label>Title matches
-      <input type="text" id="title-input" placeholder="search text">
-    </label>
-    <label class="inline">
-      <input type="checkbox" id="title-regex"> regex
-    </label>
-  </section>
-
-  <section class="panel" data-mode="age" hidden>
-    <label>Older than
-      <input type="number" id="age-input" min="1" value="7">
-      <select id="age-unit">
-        <option value="hours">hours</option>
-        <option value="days" selected>days</option>
-      </select>
-    </label>
-  </section>
-
   <section class="panel" data-mode="duplicates" hidden>
     <label>Match duplicates by
       <select id="dup-mode">
@@ -68,9 +50,25 @@
     </label>
     <p class="hint">Keeps the most recently used tab in each group.</p>
   </section>
-
   <section class="panel" data-mode="unique" hidden>
     <p class="hint">Tabs whose domain has only this one tab open &mdash; often stragglers that get lost among busier domains.</p>
+  </section>
+  <section class="panel" data-mode="title" hidden>
+    <label>Title matches
+      <input type="text" id="title-input" placeholder="search text">
+    </label>
+    <label class="inline">
+      <input type="checkbox" id="title-regex"> regex
+    </label>
+  </section>
+  <section class="panel" data-mode="age" hidden>
+    <label>Older than
+      <input type="number" id="age-input" min="1" value="7">
+      <select id="age-unit">
+        <option value="hours">hours</option>
+        <option value="days" selected>days</option>
+      </select>
+    </label>
   </section>
 
   <div class="preview">

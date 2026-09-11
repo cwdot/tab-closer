@@ -1,4 +1,4 @@
-const state = { mode: "domain", matches: [], selected: new Set(), currentWindowOnly: false };
+const state = { mode: "domain", matches: [], selected: new Set(), selectedDomains: new Set(), currentWindowOnly: false };
 
 function tabQuery() {
   const q = { pinned: false };
@@ -40,8 +40,11 @@ async function renderTopDomains() {
   }
   const top = [...counts.entries()]
     .filter(([, n]) => n > 1)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10);
+    .sort((a, b) => b[1] - a[1]);
+
+  for (const h of [...state.selectedDomains]) {
+    if (!counts.has(h)) state.selectedDomains.delete(h);
+  }
 
   list.innerHTML = "";
   if (top.length === 0) {
@@ -49,24 +52,62 @@ async function renderTopDomains() {
     empty.className = "empty";
     empty.textContent = "no domain has more than one tab";
     list.appendChild(empty);
+    updateDomainBulk(0);
     return;
   }
   for (const [host, n] of top) {
     const li = document.createElement("li");
     li.title = `${n} tabs on ${host}`;
+
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = state.selectedDomains.has(host);
+    cb.addEventListener("click", e => e.stopPropagation());
+    cb.addEventListener("change", () => {
+      if (cb.checked) state.selectedDomains.add(host);
+      else state.selectedDomains.delete(host);
+      li.classList.toggle("checked", cb.checked);
+      updateDomainBulk(top.length);
+      refresh();
+    });
+
     const name = document.createElement("span");
+    name.className = "host";
     name.textContent = host;
     const count = document.createElement("span");
     count.className = "count";
     count.textContent = n;
-    li.append(name, count);
+    li.classList.toggle("checked", cb.checked);
+    li.append(cb, name, count);
     li.addEventListener("click", () => {
-      inputs.domain.value = host;
-      inputs.domainRegex.checked = false;
-      refresh();
+      cb.checked = !cb.checked;
+      cb.dispatchEvent(new Event("change"));
     });
     list.appendChild(li);
   }
+  updateDomainBulk(top.length);
+}
+
+function updateDomainBulk(total) {
+  const cb = document.getElementById("domain-select-all");
+  if (!cb) return;
+  cb.disabled = total === 0;
+  cb.checked = total > 0 && state.selectedDomains.size === total;
+  cb.indeterminate = state.selectedDomains.size > 0 && state.selectedDomains.size < total;
+}
+
+function toggleAllDomains(checked) {
+  const list = document.getElementById("top-domains-list");
+  state.selectedDomains.clear();
+  for (const li of list.querySelectorAll("li")) {
+    const cb = li.querySelector("input[type=checkbox]");
+    if (!cb) continue;
+    cb.checked = checked;
+    li.classList.toggle("checked", checked);
+    if (checked) state.selectedDomains.add(li.querySelector(".host").textContent);
+  }
+  updateDomainBulk(list.querySelectorAll("li input[type=checkbox]").length);
+  refresh();
 }
 
 function hostnameOf(url) {
@@ -124,6 +165,13 @@ async function findMatches() {
   const now = Date.now();
 
   if (state.mode === "domain") {
+    if (state.selectedDomains.size > 0) {
+      const picked = [...state.selectedDomains].map(d => d.toLowerCase());
+      return tabs.filter(t => {
+        const h = hostnameOf(t.url).toLowerCase();
+        return picked.some(d => h === d || h.endsWith("." + d));
+      });
+    }
     const value = inputs.domain.value.trim();
     if (inputs.domainRegex.checked) {
       const m = compileMatcher(value, true, inputs.domain);
@@ -297,6 +345,17 @@ async function deletePreset() {
 
 document.querySelectorAll(".tab").forEach(t => {
   t.addEventListener("click", () => setMode(t.dataset.mode));
+});
+
+inputs.domain.addEventListener("input", () => {
+  if (state.selectedDomains.size > 0) {
+    state.selectedDomains.clear();
+    renderTopDomains();
+  }
+});
+
+document.getElementById("domain-select-all").addEventListener("change", e => {
+  toggleAllDomains(e.target.checked);
 });
 
 for (const el of Object.values(inputs)) {
